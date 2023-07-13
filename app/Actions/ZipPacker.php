@@ -68,7 +68,12 @@ class ZipPacker implements ZipPackerContract
                     ]);
                 }
             })
-            ->pipe(fn($collect) => collect($this->pageMaker->make($collect->pluck('path'), $options)))
+            ->pipe(
+                fn($collect) => collect($this->pageMaker->make(
+                    $collect->pluck('name')->map(fn($p) => 'image/' . $p),
+                    $options,
+                )),
+            )
             ->each(function ($page, $index) use ($resources, $options) {
                 $resources->push([
                     'id' => 'page-' . ($index + 1),
