@@ -143,6 +143,6 @@ return [
         'xh' => 'Xhosa',
         'yi' => 'Yiddish',
         'yo' => 'Yoruba - Èdè Yorùbá',
-        'zu' => 'Zulu - isiZulu'
+        'zu' => 'Zulu - isiZulu',
     ],
 ];

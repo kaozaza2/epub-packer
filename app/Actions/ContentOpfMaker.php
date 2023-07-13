@@ -26,7 +26,11 @@ class ContentOpfMaker implements ContentOpfMakerContract
             'prefix',
             implode(' ', [
                 'rendition: http://www.idpf.org/vocab/rendition/#',
-                'ibooks: http://vocabulary.itunes.apple.com/rdf/ibooks/vocabulary-extensions-1.0/'
+                'ebpaj: http://www.ebpaj.jp/',
+                'fixed-layout-jp: http://www.digital-comic.jp/',
+                'kadokawa: http://www.kadokawa.co.jp/',
+                'access: http://www.access-company.com/2012/layout#',
+                'ibooks: http://vocabulary.itunes.apple.com/rdf/ibooks/vocabulary-extensions-1.0/',
             ])
         );
 
@@ -79,6 +83,7 @@ class ContentOpfMaker implements ContentOpfMakerContract
         $writer->endElement();
 
         $writer->startElement('spine');
+        $writer->writeAttribute('page-progression-direction', 'rtl');
 
         foreach ($resources->where('tag', 'spine') as $m) {
             $writer->startElement('itemref');

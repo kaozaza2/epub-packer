@@ -40,66 +40,37 @@ class TocMaker implements TocMakerContract
         $writer->startElement('nav');
         $writer->writeAttribute('id', 'toc');
         $writer->writeAttribute('epub:type', 'toc');
-
-        $this->navListMaker($writer, $pages);
-
+        $writer->startElement('h1');
+        $writer->text('Navigation');
         $writer->endElement();
-
-        $writer->startElement('nav');
-        $writer->writeAttribute('epub:type', 'page-list');
-
-        $writer->startElement('h2');
-        $writer->text('PageList');
+        $writer->startElement('li');
+        $writer->startElement('a');
+        $writer->writeAttribute('href', $pages[0]);
+        $writer->text('Cover');
         $writer->endElement();
-
-        $this->navListMaker($writer, $pages);
-
+        $writer->endElement();
         $writer->endElement();
 
         $writer->startElement('nav');
         $writer->writeAttribute('epub:type', 'landmarks');
-
-        $writer->startElement('h2');
-        $writer->text('PageList');
+        $writer->writeAttribute('id', 'guide');
+        $writer->startElement('h1');
+        $writer->text('Guide');
         $writer->endElement();
-
         $writer->startElement('ol');
         $writer->startElement('li');
-
         $writer->startElement('a');
         $writer->writeAttribute('epub:type', 'cover');
         $writer->writeAttribute('href', $pages[0]);
         $writer->text('Cover');
         $writer->endElement();
-
         $writer->endElement();
         $writer->endElement();
-
         $writer->endElement();
 
         $writer->endElement();
-
         $writer->endElement();
 
         return $writer->outputMemory();
-    }
-
-    private function navListMaker($writer, array $pages): void
-    {
-        $writer->startElement('ol');
-
-        $i = 1;
-        foreach ($pages as $page) {
-            $writer->startElement('li');
-
-            $writer->startElement('a');
-            $writer->writeAttribute('href', $page);
-            $writer->text($i++);
-            $writer->endElement();
-
-            $writer->endElement();
-        }
-
-        $writer->endElement();
     }
 }

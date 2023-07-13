@@ -11,14 +11,13 @@ class PageContentMakerFactory implements PageContentMakerFactoryContract
 {
     public function __construct(
         protected readonly PageContentMakerContract $contentMaker,
-    )
-    {
+    ) {
         // noop
     }
 
     public function make(Collection|array $images = [], array $options = []): array
     {
-        if (!isset($options['title'])) {
+        if (! isset($options['title'])) {
             throw new Exception('Title is required');
         }
 
@@ -28,15 +27,15 @@ class PageContentMakerFactory implements PageContentMakerFactoryContract
         $id = $options['page-id'] ?? 'page';
 
         return Collection::wrap($images)
-            ->map(fn($path, $index) => [
-                'name' => 'page-' . ($index + 1) . '.xhtml',
+            ->map(fn ($path, $index) => [
+                'name' => 'page-'.($index + 1).'.xhtml',
                 'data' => $this->contentMaker->make(
-                    $id . '-' . ($index + 1),
+                    $id.'-'.($index + 1),
                     $title,
                     $width,
                     $height,
-                    'image/' . basename($path),
-                )
+                    'image/'.basename($path),
+                ),
             ])->toArray();
     }
 }

@@ -21,6 +21,7 @@ class PageContentMaker implements PageContentMakerContract
         $writer->startElement('html');
         $writer->writeAttribute('xmlns', 'http://www.w3.org/1999/xhtml');
         $writer->writeAttribute('xmlns:epub', 'http://www.idpf.org/2007/ops');
+        $writer->writeAttribute('class', 'hltr');
 
         $writer->startElement('head');
 
@@ -28,42 +29,35 @@ class PageContentMaker implements PageContentMakerContract
         $writer->writeAttribute('charset', 'utf-8');
         $writer->endElement();
 
-        $writer->startElement('meta');
-        $writer->writeAttribute('name', 'viewport');
-        $writer->writeAttribute('content', 'width=' . $width . ', height=' . $height);
-        $writer->endElement();
-
         $writer->startElement('title');
         $writer->text($title);
         $writer->endElement();
 
         $writer->startElement('link');
-        $writer->writeAttribute('href', 'css/style.css');
         $writer->writeAttribute('rel', 'stylesheet');
         $writer->writeAttribute('type', 'text/css');
+        $writer->writeAttribute('href', 'css/book-style.css');
         $writer->endElement();
 
         $writer->endElement();
 
         $writer->startElement('body');
-        $writer->writeAttribute('id', "$id-body");
-        $writer->writeAttribute('class', 'body');
+        $writer->writeAttribute('class', 'p-image');
 
         $writer->startElement('div');
-        $writer->writeAttribute('id', "$id-container");
-        $writer->writeAttribute('class', 'image-container');
+        $writer->writeAttribute('class', 'main align-center');
+
+        $writer->startElement('p');
 
         $writer->startElement('img');
-        $writer->writeAttribute('id', "$id-img");
-        $writer->writeAttribute('class', 'image-item');
+        $writer->writeAttribute('class', 'fit');
         $writer->writeAttribute('src', $path);
-        $writer->writeAttribute('alt', $title);
+        $writer->writeAttribute('alt', '');
         $writer->endElement();
 
         $writer->endElement();
-
         $writer->endElement();
-
+        $writer->endElement();
         $writer->endElement();
 
         return $writer->outputMemory();

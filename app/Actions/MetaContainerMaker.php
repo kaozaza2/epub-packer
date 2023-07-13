@@ -7,7 +7,6 @@ use XMLWriter;
 
 class MetaContainerMaker implements MetaContainerMakerContract
 {
-
     public function make(): string
     {
         $writer = new XMLWriter();

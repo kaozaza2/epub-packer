@@ -36,6 +36,13 @@ return [
             'throw' => false,
         ],
 
+        'assets' => [
+            'driver' => 'local',
+            'root' => storage_path('assets'),
+            'throw' => false,
+            'read-only' => true,
+        ],
+
         'public' => [
             'driver' => 'local',
             'root' => storage_path('app/public'),

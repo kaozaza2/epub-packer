@@ -135,7 +135,7 @@ class AttachmentController extends Controller
 
         if ($project->books()->exists()) {
             $project->books->each(
-                fn($book) => $book->delete(),
+                fn ($book) => $book->delete(),
             );
         }
 

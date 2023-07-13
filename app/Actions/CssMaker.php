@@ -6,6 +6,10 @@ use App\Contracts\Actions\CssMaker as CssMakerContract;
 
 class CssMaker implements CssMakerContract
 {
+    protected array $css = [
+        'book-style.css' => '',
+    ];
+
     public function make(array $options = []): string
     {
         $width = $options['width'] ?? '1800';
