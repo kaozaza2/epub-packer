@@ -129,6 +129,14 @@
                     <div class="flex items-center gap-1 md:justify-end">
 
                         @if($project->books->count() > 0)
+                            <form method="post" action="{{ route('books.delete', ['project' => $project]) }}">
+                                @csrf
+                                @method('DELETE')
+                                <x-primary-button class="bg-red-600">
+                                    {{ __('Clear EPUB') }}
+                                </x-primary-button>
+                            </form>
+
                             <div
                             x-data="{
                                  open: false,
@@ -176,7 +184,7 @@
                                     <ul class="py-2 text-sm text-gray-700">
                                         @foreach($project->books as $book)
                                             <li>
-                                                <a href="{{ route('books.download', ['book' => $book]) }}" class="block px-4 py-2 hover:bg-gray-100">
+                                                <a href="{{ route('books.download', ['project' => $project, 'book' => $book]) }}" class="block px-4 py-2 hover:bg-gray-100">
                                                     {{ $book->name }}
                                                 </a>
                                             </li>

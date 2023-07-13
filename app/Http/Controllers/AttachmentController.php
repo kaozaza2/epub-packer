@@ -129,8 +129,23 @@ class AttachmentController extends Controller
         return back()->with('status', 'Epub created.');
     }
 
-    public function download(Book $book)
+    public function destroyEpub(Project $project)
     {
+        $this->authorize('update', $project);
+
+        if ($project->books()->exists()) {
+            $project->books->each(
+                fn($book) => $book->delete(),
+            );
+        }
+
+        return back()->with('status', 'Epub cleared.');
+    }
+
+    public function download(Project $project, Book $book)
+    {
+        $this->authorize('view', $project);
+
         return Storage::download($book->path, $book->name);
     }
 }

@@ -42,7 +42,8 @@ Route::middleware('auth')->group(function () {
     Route::put('/attachments/{project}/destroy', [AttachmentController::class, 'destroy'])->name('attachments.destroy');
     Route::post('/attachments/{project}/epub', [AttachmentController::class, 'epub'])->name('attachments.epub');
 
-    Route::get('/books/{book}/dl', [AttachmentController::class, 'download'])->name('books.download');
+    Route::get('/books/{project}/{book}/dl', [AttachmentController::class, 'download'])->name('books.download');
+    Route::delete('/books/{project}/rm', [AttachmentController::class, 'destroyEpub'])->name('books.delete');
 });
 
 require __DIR__.'/auth.php';

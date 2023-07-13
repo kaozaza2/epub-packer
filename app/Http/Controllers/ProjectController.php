@@ -77,6 +77,18 @@ class ProjectController extends Controller
     {
         $this->authorize('destroy', $project);
 
+        if ($project->attachments()->exists()) {
+            $project->attachments->each(
+                fn ($attachment) => $attachment->delete(),
+            );
+        }
+
+        if ($project->books()->exists()) {
+            $project->books->each(
+                fn ($book) => $book->delete(),
+            );
+        }
+
         $project->delete();
 
         return redirect()->route('projects.index')

@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Support\Facades\Storage;
 
 class Book extends Model
 {
@@ -12,6 +13,15 @@ class Book extends Model
         'name',
         'path',
     ];
+
+    public static function boot(): void
+    {
+        parent::boot();
+
+        static::deleting(function ($book) {
+            Storage::delete($book->path);
+        });
+    }
 
     public function project(): BelongsTo
     {
