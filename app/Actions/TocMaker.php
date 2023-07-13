@@ -43,10 +43,12 @@ class TocMaker implements TocMakerContract
         $writer->startElement('h1');
         $writer->text('Navigation');
         $writer->endElement();
+        $writer->startElement('ol');
         $writer->startElement('li');
         $writer->startElement('a');
         $writer->writeAttribute('href', $pages[0]);
         $writer->text('Cover');
+        $writer->endElement();
         $writer->endElement();
         $writer->endElement();
         $writer->endElement();
