@@ -199,23 +199,38 @@
 
                         <div
                             x-data="{
-                                upload(files) {
-                                    const form = new FormData();
+                                async upload(files) {
+                                    let chunk = [];
+                                    let previousSize = 0;
                                     for (let i = 0; i < files.length; i++) {
-                                        form.append('images[]', files[i]);
+                                        const isLastFile = i === files.length - 1;
+                                        if (previousSize > 10000000 || isLastFile) {
+                                            if (isLastFile) {
+                                                chunk.push(files[i]);
+                                            }
+                                            const form = new FormData();
+                                            for (let j = 0; j < chunk.length; j++) {
+                                                form.append('images[]', chunk[j]);
+                                            }
+                                            await window.axios.post('{{ route('attachments.add', ['project' => $project]) }}', form)
+                                                .then(r => isLastFile && window.location.reload())
+                                                .catch(e => {
+                                                    window.Swal.fire({
+                                                        icon: 'error',
+                                                        title: 'Oops...',
+                                                        text: e.response.data.message,
+                                                    })
+                                                    .then(() => {
+                                                        window.location.reload();
+                                                    });
+                                                });
+                                            chunk = [];
+                                            previousSize = 0;
+                                            continue;
+                                        }
+                                        chunk.push(files[i]);
+                                        previousSize += files[i].size;
                                     }
-
-                                    window.axios.post('{{ route('attachments.add', ['project' => $project]) }}', form)
-                                        .then((response) => {
-                                            window.location.reload();
-                                        })
-                                        .catch((error) => {
-                                            window.Swal.fire({
-                                                icon: 'error',
-                                                title: 'Oops...',
-                                                text: error.response.data.message,
-                                            });
-                                        });
                                 },
                             }"
                         >
