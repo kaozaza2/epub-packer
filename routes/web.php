@@ -37,9 +37,9 @@ Route::middleware('auth')->group(function () {
     Route::put('/projects/{project}/update', [ProjectController::class, 'update'])->name('projects.update');
     Route::delete('/projects/{project}/destroy', [ProjectController::class, 'destroy'])->name('projects.destroy');
 
-    Route::put('/attachments/{project}/add', [AttachmentController::class, 'store'])->name('attachments.add');
+    Route::post('/attachments/{project}/add', [AttachmentController::class, 'store'])->name('attachments.add');
     Route::put('/attachments/{project}/sort', [AttachmentController::class, 'sort'])->name('attachments.sort');
-    Route::put('/attachments/{project}/destroy', [AttachmentController::class, 'destroy'])->name('attachments.destroy');
+    Route::delete('/attachments/{project}/destroy', [AttachmentController::class, 'destroy'])->name('attachments.destroy');
     Route::post('/attachments/{project}/epub', [AttachmentController::class, 'epub'])->name('attachments.epub');
 
     Route::get('/books/{project}/{book}/dl', [AttachmentController::class, 'download'])->name('books.download');

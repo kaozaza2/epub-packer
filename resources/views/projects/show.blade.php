@@ -23,38 +23,40 @@
 
                     @if(session('status') !== null)
                         <div
-                            x-data="{ show: true }"
-                            x-show="show"
-                            x-transition
-                            x-init="setTimeout(() => show = false, 2000)"
-                            class="flex items-center p-4 mb-4 text-sm text-green-800 rounded-lg bg-green-50"
-                            role="alert">
-                            <svg class="flex-shrink-0 inline w-4 h-4 mr-3" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 20 20">
-                                <path d="M10 .5a9.5 9.5 0 1 0 9.5 9.5A9.51 9.51 0 0 0 10 .5ZM9.5 4a1.5 1.5 0 1 1 0 3 1.5 1.5 0 0 1 0-3ZM12 15H8a1 1 0 0 1 0-2h1v-3H8a1 1 0 0 1 0-2h2a1 1 0 0 1 1 1v4h1a1 1 0 0 1 0 2Z"/>
-                            </svg>
-                            <span class="sr-only">Info</span>
-                            <div>{{ session('status') }}</div>
-                        </div>
+                            x-data="{
+                                init() {
+                                    setTimeout(() =>
+                                        window.Swal.fire({
+                                            icon: 'success',
+                                            title: '{{ __('Success') }}',
+                                            text: '{{ session('status') }}',
+                                            showConfirmButton: false,
+                                            timer: 1500
+                                        })
+                                    , 100);
+                                },
+                            }"
+                            x-init="init()"
+                        ></div>
                     @endif
 
                     @if($errors->any())
                         <div
-                            x-data="{ show: true }"
-                            x-show="show"
-                            x-transition
-                            x-init="setTimeout(() => show = false, 2000)"
-                            class="flex items-center p-4 mb-4 text-sm text-red-800 rounded-lg bg-red-50" role="alert">
-                            <svg class="flex-shrink-0 inline w-4 h-4 mr-3" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 20 20">
-                                <path d="M10 .5a9.5 9.5 0 1 0 9.5 9.5A9.51 9.51 0 0 0 10 .5ZM9.5 4a1.5 1.5 0 1 1 0 3 1.5 1.5 0 0 1 0-3ZM12 15H8a1 1 0 0 1 0-2h1v-3H8a1 1 0 0 1 0-2h2a1 1 0 0 1 1 1v4h1a1 1 0 0 1 0 2Z"/>
-                            </svg>
-                            <span class="sr-only">Info</span>
-
-                            <div class="flex flex-col">
-                                @foreach($errors->all() as $error)
-                                    <div>{{ $error }}</div>
-                                @endforeach
-                            </div>
-                        </div>
+                            x-data="{
+                                init() {
+                                    setTimeout(() =>
+                                        window.Swal.fire({
+                                            icon: 'error',
+                                            title: 'Oops...',
+                                            text: '{{ implode(', ', $errors->all()) }}',
+                                            showConfirmButton: false,
+                                            timer: 1500
+                                        })
+                                    , 100);
+                                },
+                            }"
+                            x-init="init()"
+                        ></div>
                     @endif
 
 
@@ -194,16 +196,35 @@
                             </div>
                         @endif
 
-                        <form x-data x-ref="root" enctype="multipart/form-data" method="post" action="{{ route('attachments.add', ['project' => $project]) }}">
-                            @csrf
-                            @method('PUT')
 
-                            <input x-ref="file" @change="$refs.root.submit()" type="file" class="hidden" name="images[]" multiple>
+                        <div
+                            x-data="{
+                                upload(files) {
+                                    const form = new FormData();
+                                    for (let i = 0; i < files.length; i++) {
+                                        form.append('images[]', files[i]);
+                                    }
 
-                            <x-primary-button class="bg-green-600" type="button" @click="$refs.file.click()">
+                                    window.axios.post('{{ route('attachments.add', ['project' => $project]) }}', form)
+                                        .then((response) => {
+                                            window.location.reload();
+                                        })
+                                        .catch((error) => {
+                                            window.Swal.fire({
+                                                icon: 'error',
+                                                title: 'Oops...',
+                                                text: error.response.data.message,
+                                            });
+                                        });
+                                },
+                            }"
+                        >
+                            <input x-ref="file" @change="upload($event.target.files)" type="file" class="hidden" multiple>
+
+                            <x-primary-button type="button" class="bg-green-600" type="button" @click="$refs.file.click()">
                                 {{ __('Add image(s)') }}
                             </x-primary-button>
-                        </form>
+                        </div>
 
                         @if($project->attachments->count() > 0)
                             <form method="post" action="{{ route('attachments.epub', ['project' => $project]) }}">
@@ -216,41 +237,7 @@
                     @if ($project->attachments->count() > 0)
                         <hr class="border-gray-200 my-2"/>
 
-                        <form x-data x-ref="form1" method="post" action="{{ route('attachments.sort', ['project' => $project]) }}">
-                            @csrf
-                            @method('PUT')
-
-                            <x-laravel-blade-sortable::sortable class="flex flex-col gap-2">
-                                @foreach ($project->attachments->sortBy('order_num') as $attachment)
-                                    <x-laravel-blade-sortable::sortable-item
-                                        class="flex flex-col p-2 border border-gray-200 rounded-lg"
-                                        sort-key="{{ $attachment->id }}">
-                                        <input name="order[]" type="hidden" value="{{ $attachment->id }}">
-                                        <div class="flex items-center gap-1">
-                                            <input class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 focus:ring-2" type="checkbox" name="delete[{{ $attachment->id }}]" multiple>
-                                            <span class="text-gray-600">{{ $attachment->filename }}</span>
-                                        </div>
-                                    </x-laravel-blade-sortable::sortable-item>
-                                @endforeach
-                            </x-laravel-blade-sortable::sortable>
-
-                            <div class="flex items-center justify-end mt-2 gap-1">
-                                <x-primary-button
-                                    @click="$refs.form1.action = '{{ route('attachments.destroy', ['project' => $project]) }}'; $refs.form1.submit();"
-                                    type="button" class="bg-red-500"
-                                >
-                                    {{ __('Delete') }}
-                                </x-primary-button>
-
-                                <x-primary-button>
-                                    {{ __('Save') }}
-                                </x-primary-button>
-
-                                <x-link-button :href="request()->url()" class="hover:bg-red-500">
-                                    {{ __('Reset') }}
-                                </x-link-button>
-                            </div>
-                        </form>
+                        @include('projects.sort', ['project' => $project])
                     @endif
 
                 </section>
