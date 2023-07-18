@@ -117,7 +117,7 @@ class AttachmentController extends Controller
             'subject' => $project->book_subject,
             'width' => $project->book_width,
             'height' => $project->book_height,
-            'pager' => $project->book_webtoon_style ? 'yes' : 'no',
+            'pager' => $project->book_webtoon_style,
         ]);
 
         $project->books()->create([

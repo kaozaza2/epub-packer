@@ -85,7 +85,7 @@ class ZipPacker implements ZipPackerContract
                     $options,
                 )),
             )
-            ->each(function ($page, $index) use ($resources) {
+            ->each(function ($page, $index) use ($options, $resources) {
                 $resources->push([
                     'id' => 'page-' . ($index + 1),
                     'href' => $page['name'],
@@ -97,7 +97,7 @@ class ZipPacker implements ZipPackerContract
                     'linear' => 'yes',
                     'idref' => 'page-' . ($index + 1),
                     'properties' => match (true) {
-                        ($options['pager'] ?? 'no') === 'yes',
+                        $options['pager'],
                             $index == 0 => 'rendition:page-spread-center',
                         $index % 2 == 0 => 'rendition:page-spread-right',
                         default => 'rendition:page-spread-left',
